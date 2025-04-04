@@ -1,0 +1,17 @@
+# Ignorar el entorno virtual
+venv/
+
+# Ignorar archivos temporales de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de entorno (opcional)
+.env
+
+# Archivos de VSCode (si usas este editor)
+.vscode/
+
+# Archivos de macOS (si aplica)
+.DS_Store
