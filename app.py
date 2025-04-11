@@ -1,14 +1,31 @@
-from flask import Flask
+import os
+from flask import Flask, request, jsonify
+from faster_whisper import WhisperModel
 
 app = Flask(__name__)
+model = WhisperModel("base")  # Modelo base de faster-whisper
+
+@app.route('/transcribe', methods=['POST'])
+def transcribe():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+    file = request.files['file']
+    file_path = os.path.join("uploads", file.filename)
+    os.makedirs("uploads", exist_ok=True)
+    file.save(file_path)
+    try:
+        segments, info = model.transcribe(file_path)
+        transcription = " ".join(segment.text for segment in segments)
+        os.remove(file_path)
+        return jsonify({"transcription": transcription})
+    except Exception as e:
+        os.remove(file_path)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/')
 def home():
-    return "Hola desde Flask en Render!"
-
-@app.route('/saludo/<nombre>')
-def saludo(nombre):
-    return f"Hola, {nombre}! Bienvenido a Flask en Render."
+    return 'Faster Whisper en Vercel'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+    port = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=port)
