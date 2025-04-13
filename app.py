@@ -1,9 +1,9 @@
 import os
 from flask import Flask, request, jsonify
-from faster_whisper import WhisperModel
+import whisper
 
 app = Flask(__name__)
-model = WhisperModel("base")  # Modelo base de faster-whisper
+model = whisper.load_model("base")  # Usando whisper original
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
@@ -14,8 +14,8 @@ def transcribe():
     os.makedirs("uploads", exist_ok=True)
     file.save(file_path)
     try:
-        segments, info = model.transcribe(file_path)
-        transcription = " ".join(segment.text for segment in segments)
+        result = model.transcribe(file_path)
+        transcription = result["text"]
         os.remove(file_path)
         return jsonify({"transcription": transcription})
     except Exception as e:
@@ -24,7 +24,7 @@ def transcribe():
 
 @app.route('/')
 def home():
-    return 'Faster Whisper en Vercel'
+    return 'Whisper Transcription Service'
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 3000))
