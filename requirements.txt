@@ -1,4 +1,2 @@
-flask
-openai-whisper
-torch
-python-multipart
+Flask==3.0.3
+serverless-wsgi==1.7.6

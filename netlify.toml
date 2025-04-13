@@ -1,15 +1,8 @@
 [build]
-  command = "pip install -r requirements.txt"
-  functions = "nfunctions"
-
-[build.environment]
-  PYTHON_VERSION = "3.11"
+  functions = "netlify/functions"
+  command = "pip install -r requirements.txt && cp wsgi_handler.py netlify/functions/hello.py"
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/app"
+  to = "/.netlify/functions/hello"
   status = 200
-
-[functions]
-  directory = "functions"
-  node_bundler = "esbuild"
